@@ -482,6 +482,10 @@ var ERWP = (function($, window, erwpSettings) {
                 ERWP.breakPoint = breakPoint;
                 ERWP.reloadFiFAds();
                 $win.trigger('erwpBreakPointChange', [ERWP.breakPoint]);
+            } else {
+                $.each(ERWP.$fifAds, function(i, $adElem) {
+                    ERWP.resizeIframeToDocumentSize($adElem);
+                });
             }
         };
         $win.on('resize', onWindowResize);
