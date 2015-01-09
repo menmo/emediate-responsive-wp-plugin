@@ -352,8 +352,22 @@ var ERWP = (function($, window, erwpSettings) {
              */
             resizeIframeToDocumentSize : function($adElem) {
                 var $iframe = $adElem.find('iframe'),
-                    $iframeBody = $iframe.contents().find('body'),
-                    iframeHeight = $iframe.attr('data-current-height') || $iframe.height(),
+                    $iframeBody = $iframe.contents().find('body');
+                var origWidth = parseInt($adElem[0].style.width.replace(/[^-\d\.]/g, '')),
+                    currentRatio = $iframe.data('current-scale') || 1,
+                    ratio = $adElem.width() / origWidth;
+
+
+                if(ratio != currentRatio) {
+                    $iframe.data('current-scale', ratio).css({
+                        '-webkit-transform': 'scale('+ratio+')',
+                        '-ms-zoom': ratio,
+                        '-moz-transform': 'scale('+ratio+')',
+                        '-o-transform': 'scale('+ratio+')'
+                    });
+                }
+
+                var iframeHeight = $iframe.attr('data-current-height') || $iframe.height(),
                     iframeWidth = $iframe.attr('data-current-width') || $iframe.width(),
                     iframeDocHeight = $iframeBody.outerHeight(),
                     iframeDocWidth = $iframeBody.outerWidth(),
@@ -361,15 +375,19 @@ var ERWP = (function($, window, erwpSettings) {
                         if( newSize != oldSize ) {
                             _debug('Resizing ad '+$adElem.attr('id')+' '+sizeFunc+', from '+oldSize+' to '+newSize);
                             $iframe[sizeFunc](iframeDocHeight).attr('data-current-'+sizeFunc, iframeDocHeight);
-                            $adElem[sizeFunc](iframeDocHeight);
+                            //$adElem[sizeFunc](iframeDocHeight*ratio);
                             return true;
                         }
                         return false;
                     },
-                    gotNewHeight = updateSize(iframeDocHeight, iframeHeight, 'height'),
-                    gotNewWidth = updateSize(iframeDocWidth, iframeWidth, 'width');
+                    gotNewHeight = updateSize(iframeDocHeight, iframeHeight, 'height')//,
+                    //gotNewWidth = updateSize(iframeDocWidth, iframeWidth, 'width');
 
-                return gotNewHeight || gotNewWidth;
+                if(ratio != 1) {
+                    $adElem.height(iframeDocHeight*ratio);
+                }
+
+                return gotNewHeight;
             },
 
             /**
