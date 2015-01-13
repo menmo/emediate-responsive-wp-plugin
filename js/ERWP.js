@@ -2,6 +2,8 @@ var ERWP = (function($, window, erwpSettings) {
 
     'use strict';
 
+    erwpSettings.debug = true;
+
     var $win = $(window),
         _debug = function(message) {
             if( typeof window.erwpDebug == 'function' ) {
@@ -375,7 +377,6 @@ var ERWP = (function($, window, erwpSettings) {
                         if( newSize != oldSize ) {
                             _debug('Resizing ad '+$adElem.attr('id')+' '+sizeFunc+', from '+oldSize+' to '+newSize);
                             $iframe[sizeFunc](iframeDocHeight).attr('data-current-'+sizeFunc, iframeDocHeight);
-                            //$adElem[sizeFunc](iframeDocHeight*ratio);
                             return true;
                         }
                         return false;
@@ -383,9 +384,7 @@ var ERWP = (function($, window, erwpSettings) {
                     gotNewHeight = updateSize(iframeDocHeight, iframeHeight, 'height')//,
                     //gotNewWidth = updateSize(iframeDocWidth, iframeWidth, 'width');
 
-                if(ratio != 1) {
-                    $adElem.height(iframeDocHeight*ratio);
-                }
+                $adElem.height(iframeDocHeight*ratio);
 
                 return gotNewHeight;
             },
