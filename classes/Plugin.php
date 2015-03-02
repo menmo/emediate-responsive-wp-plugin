@@ -70,7 +70,8 @@ class ERWP_Plugin {
                 'locationjQueryFilter' => self::$opts['location_jquery_filter'],
                 'debug' => ERWP_DEBUG,
                 'appLocationMethod' => apply_filters('emediate_app_location_method', ''),
-                'fifHtmlFile' => ERWP_PLUGIN_URL.'js/EAS_fif.html#eas-host='.self::$opts['default_js_host']
+                'fifHtmlFile' => ERWP_PLUGIN_URL.'js/EAS_fif.html#eas-host='.self::$opts['default_js_host'],
+                'cat1' => apply_filters('emediate_cat1', '')
             ));
 
         $script .= '; '.PHP_EOL.'/* ]]> */</script>';

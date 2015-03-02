@@ -237,7 +237,7 @@ var ERWP = (function($, window, erwpSettings) {
                         .html('');
 
                     src = '//'+erwpSettings.defaultJSHost+'/eas?cre=mu;js=y;target=_blank;'+erwpSettings.cuParamName+'='+cu+
-                        ';'+erwpSettings.adQuery+(extraQuery || '');
+                        ';cat1='+erwpSettings.cat1+';'+erwpSettings.adQuery+(extraQuery || '');
 
                     // sanitize url
                     src = src.replace(/;;/g, ';');
