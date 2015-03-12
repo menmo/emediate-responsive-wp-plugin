@@ -121,4 +121,11 @@ class ERWP_Plugin {
         }
         return $ad_html;
     }
+
+    public static function getOpts() {
+        if(!self::$opts) {
+            self::$opts = ERWP_Options::load();
+        }
+        return self::$opts;
+    }
 }
