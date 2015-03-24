@@ -91,6 +91,9 @@ class ERWP_Plugin {
      * @return string
      */
     public static function generateAdMarkup($ad, $echo = true) {
+        if(!self::$ad_markup_creator || ! self::$opts) {
+            self::themeInit();
+        }
         if( !is_array($ad) ) {
             foreach(self::$opts['ads'] as $ad_data) {
                 if( $ad_data['slug'] == $ad ) {
