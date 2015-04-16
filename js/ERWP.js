@@ -306,7 +306,7 @@ var ERWP = (function($, window, erwpSettings) {
                     _debug('Making ad '+$adElem.attr('id')+' hidden, cause: '+adInspect.emptyReason);
                     this.hideAd($adElem);
                 } else {
-                    $adElem.addClass('has-ad');
+                    //$adElem.addClass('has-ad');
                     this.resizeIframeToDocumentSize($adElem);
 
                     var count = 0,
@@ -379,10 +379,14 @@ var ERWP = (function($, window, erwpSettings) {
                         }
                         return false;
                     },
-                    gotNewHeight = updateSize(iframeDocHeight, iframeHeight, 'height')//,
+                    gotNewHeight = updateSize(iframeDocHeight, iframeHeight, 'height');//,
                     //gotNewWidth = updateSize(iframeDocWidth, iframeWidth, 'width');
 
                 $adElem.height(iframeDocHeight*ratio);
+
+                if(iframeDocHeight > 20) {
+                    $adElem.addClass('has-ad');
+                }
 
                 return gotNewHeight;
             },
