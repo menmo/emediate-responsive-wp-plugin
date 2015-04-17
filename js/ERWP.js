@@ -2,8 +2,6 @@ var ERWP = (function($, window, erwpSettings) {
 
     'use strict';
 
-    erwpSettings.debug = true;
-
     var $win = $(window),
         _debug = function(message) {
             if( typeof window.erwpDebug == 'function' ) {
