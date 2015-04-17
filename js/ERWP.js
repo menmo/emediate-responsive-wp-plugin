@@ -2,6 +2,8 @@ var ERWP = (function($, window, erwpSettings) {
 
     'use strict';
 
+    erwpSettings.debug = true;
+
     var $win = $(window),
         _debug = function(message) {
             if( typeof window.erwpDebug == 'function' ) {
@@ -384,6 +386,7 @@ var ERWP = (function($, window, erwpSettings) {
 
                 $adElem.height(iframeDocHeight*ratio);
 
+                // Sometimes third party ads only conatins 1x1 pixels so make sure it's something bigger before adding class
                 if(iframeDocHeight > 20) {
                     $adElem.addClass('has-ad');
                 }
