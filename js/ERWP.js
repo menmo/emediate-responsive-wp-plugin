@@ -357,6 +357,13 @@ var ERWP = (function($, window, erwpSettings) {
                     currentRatio = $iframe.data('current-scale') || 1,
                     ratio = $adElem.width() / origWidth;
 
+                var outside = $adElem.closest('.outsideAdvertisement');
+                if(outside.length > 0) {
+                    var outsideVisibleWidth = parseInt($('.main').css('paddingRight'));
+                    if(outsideVisibleWidth > 0) {
+                        ratio = outsideVisibleWidth  / 250;
+                    }
+                }
 
                 if(ratio != currentRatio) {
                     $iframe.data('current-scale', ratio).css({
