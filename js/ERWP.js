@@ -479,12 +479,12 @@ var ERWP = (function($, window, erwpSettings) {
 
                 if( containsEmptyAdTag() ) {
                     status = {isEmpty: true, emptyReason: 'Contains empty-ad-tag: '+foundEmptyTag};
-                } else if( containsAllScriptNodes() ) {
+                /*} else if( containsAllScriptNodes() ) {
                     status = {isEmpty: true, emptyReason: 'Contains only script elements'};
                 } else if( containsOnlyEmptyImages() ) {
                     status = {isEmpty: true, emptyReason: 'Contains only scripts and hidden images'};
                 } else if( containsOnlyHiddenElements() ) {
-                    status = {isEmpty: true, emptyReason: 'Contains only hidden elements'};
+                    status = {isEmpty: true, emptyReason: 'Contains only hidden elements'};*/
                 } else if( $win.trigger('erwpAdLoaded', [fifWin, $adElem, this.breakPoint]) === false ) {
                     status = {isEmpty: true, emptyReason: 'Turned hidden via js event'};
                 }
