@@ -365,6 +365,9 @@ var ERWP = (function($, window, erwpSettings) {
                     }
                 }
 
+                // never zoom
+                ratio = Math.min(ratio, 1);
+
                 if(ratio != currentRatio) {
                     $iframe.data('current-scale', ratio).css({
                         '-webkit-transform': 'scale('+ratio+')',
