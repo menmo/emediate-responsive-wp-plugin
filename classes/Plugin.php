@@ -71,7 +71,8 @@ class ERWP_Plugin {
                 'debug' => ERWP_DEBUG,
                 'appLocationMethod' => apply_filters('emediate_app_location_method', ''),
                 'fifHtmlFile' => ERWP_PLUGIN_URL.'js/EAS_fif.html#eas-host='.self::$opts['default_js_host'],
-                'cat1' => apply_filters('emediate_cat1', '')
+                'cat1' => apply_filters('emediate_cat1', ''),
+                'cat2' => apply_filters('emediate_cat2', '')
             ));
 
         $script .= '; '.PHP_EOL.'/* ]]> */</script>';

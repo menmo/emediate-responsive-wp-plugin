@@ -237,7 +237,7 @@ var ERWP = (function($, window, erwpSettings) {
                         .html('');
 
                     src = '//'+erwpSettings.defaultJSHost+'/eas?cre=mu;js=y;target=_blank;'+erwpSettings.cuParamName+'='+cu+
-                        ';cat1='+erwpSettings.cat1+';'+erwpSettings.adQuery+(extraQuery || '');
+                        ';cat1='+erwpSettings.cat1+';cat2='+erwpSettings.cat2+';'+erwpSettings.adQuery+(extraQuery || '');
 
                     // sanitize url
                     src = src.replace(/;;/g, ';');
@@ -309,14 +309,14 @@ var ERWP = (function($, window, erwpSettings) {
                     //$adElem.addClass('has-ad');
                     this.resizeIframeToDocumentSize($adElem);
 
-                    /*var count = 0,
+                    var count = 0,
                         _this = this,
                         interval = setInterval(function() {
                             _this.resizeIframeToDocumentSize($adElem);
                             count += 1;
                             if (count > 4)
                                 clearInterval(interval);
-                        }, 500);*/
+                        }, 1000);
                 }
             },
 
@@ -390,11 +390,11 @@ var ERWP = (function($, window, erwpSettings) {
                             return true;
                         }
                         return false;
-                    }/*,
+                    },
                     gotNewHeight = updateSize(iframeDocHeight, iframeHeight, 'height');//,
                     //gotNewWidth = updateSize(iframeDocWidth, iframeWidth, 'width')*/;
 
-                //$adElem.height(iframeDocHeight*ratio);
+                $adElem.height(iframeDocHeight*ratio);
 
                 // Sometimes third party ads only conatins 1x1 pixels so make sure it's something bigger before adding class
                 if(iframeDocHeight > 20) {
