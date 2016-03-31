@@ -309,14 +309,14 @@ var ERWP = (function($, window, erwpSettings) {
                     //$adElem.addClass('has-ad');
                     this.resizeIframeToDocumentSize($adElem);
 
-                    var count = 0,
+                    /*var count = 0,
                         _this = this,
                         interval = setInterval(function() {
                             _this.resizeIframeToDocumentSize($adElem);
                             count += 1;
                             if (count > 4)
                                 clearInterval(interval);
-                        }, 500);
+                        }, 500);*/
                 }
             },
 
@@ -351,11 +351,13 @@ var ERWP = (function($, window, erwpSettings) {
              * @return {Boolean}
              */
             resizeIframeToDocumentSize : function($adElem) {
+
                 var $iframe = $adElem.find('iframe'),
                     $iframeBody = $iframe.contents().find('body');
                 var origWidth = parseInt($adElem[0].style.width.replace(/[^-\d\.]/g, '')),
                     currentRatio = $iframe.data('current-scale') || 1,
                     ratio = $adElem.width() / origWidth;
+
 
                 var outside = $adElem.closest('.outsideAdvertisement');
                 if(outside.length > 0) {
@@ -388,18 +390,18 @@ var ERWP = (function($, window, erwpSettings) {
                             return true;
                         }
                         return false;
-                    },
+                    }/*,
                     gotNewHeight = updateSize(iframeDocHeight, iframeHeight, 'height');//,
-                    //gotNewWidth = updateSize(iframeDocWidth, iframeWidth, 'width');
+                    //gotNewWidth = updateSize(iframeDocWidth, iframeWidth, 'width')*/;
 
-                $adElem.height(iframeDocHeight*ratio);
+                //$adElem.height(iframeDocHeight*ratio);
 
                 // Sometimes third party ads only conatins 1x1 pixels so make sure it's something bigger before adding class
                 if(iframeDocHeight > 20) {
                     $adElem.addClass('has-ad');
                 }
 
-                return gotNewHeight;
+                // return gotNewHeight;
             },
 
             /**
