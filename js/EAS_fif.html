@@ -8,10 +8,21 @@
         document.write('<'+'script src="//'+easHost+'/EAS_tag.1.0.js" '+'><'+'/'+'script'+'>');
         var doLoad = function() {window.top.ERWP.fifLoaded(window)};
         if (window.addEventListener) {
+          window.addEventListener('load', function() {
+            doLoad();
+          }, false);
+         }
+         else if (window.attachEvent) {
+            window.attachEvent('onload', function() {
+              doLoad();
+            });
+         }
+        /*
+         if (window.addEventListener) {
             window.addEventListener('load', doLoad, false);
         } else if (window.attachEvent) {
             window.attachEvent('onload', doLoad);
-        }
+        }*/
     </script>
     <style>
         html, body {border:0;margin:0;padding:0}
