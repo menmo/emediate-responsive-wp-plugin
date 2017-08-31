@@ -23,6 +23,9 @@ class ERWP_Plugin {
      * Should be called once before the page gets rendered
      */
     public static function themeInit() {
+        if( defined('ERWP_ENABLED') && ERWP_ENABLED === false )
+            return;
+
         // Load our options
         self::$opts = ERWP_Options::load();
         self::$ad_markup_creator = new ERWP_AdCreator(
@@ -70,7 +73,12 @@ class ERWP_Plugin {
                 'locationjQueryFilter' => self::$opts['location_jquery_filter'],
                 'debug' => ERWP_DEBUG,
                 'appLocationMethod' => apply_filters('emediate_app_location_method', ''),
-                'fifHtmlFile' => ERWP_PLUGIN_URL.'js/EAS_fif.html#eas-host='.self::$opts['default_js_host'],
+                'fifHtmlFile' => apply_filters('erwp_fif_url', ERWP_PLUGIN_URL.'js/EAS_fif.html#eas-host='.self::$opts['default_js_host']),
+                'adsToNotResize' => array(),
+                'resizeAdWidth' => (bool)apply_filters('emediate_resize_ad_width', true),
+                'useLazyLoad' => self::$opts['use_lazy_load'],
+                'lazyLoadOffset' => self::$opts['lazy_load_offset'],
+                'lazyLoadStart' => self::$opts['lazy_load_start'],
                 'cat1' => apply_filters('emediate_cat1', ''),
                 'cat2' => apply_filters('emediate_cat2', '')
             ));

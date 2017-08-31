@@ -34,6 +34,12 @@ var ERWP = (function($, window, erwpSettings) {
              */
             hasRegisteredBreakPoints : $.isArray(erwpSettings.breakPoints) && erwpSettings.breakPoints.length,
 
+            /**
+             * Scroll events for lazy loading.
+             *
+             * @var {Array}
+             */
+            scrollEvents : ['scroll', 'touchmove'],
 
             /**
              * Prints out an emediate ad using composed javascript
@@ -75,8 +81,15 @@ var ERWP = (function($, window, erwpSettings) {
                 this.$fifAds[fifIndex] = $elem;
 
                 var normal_render = function() {
-                    timeout = null;
-                    self.renderFifAd($elem);
+                    var data = {i : fifIndex, el : $elem};
+                    timeout = null;                    
+                    if (erwpSettings.useLazyLoad && fifIndex >= erwpSettings.lazyLoadStart) {                        
+                        // Bind lazy load
+                        $win.on(self.getNamespacedEvents(fifIndex), data, self.lazyLoad);
+                        self.lazyLoad({ data: data });
+                    } else {
+                        self.renderFifAd($elem);
+                    }
                 };
 
                 // normal browser api
@@ -178,7 +191,7 @@ var ERWP = (function($, window, erwpSettings) {
                             return;
                         }
                         if (!erwpSettings.coords) {
-                            $win.trigger('geolocation_found');
+                            $win.trigger('geolocation_found', loc);
                         }
                         erwpSettings.coords = loc.coords;
                         self.renderFifAd($elem, ';lat='+loc.latitude+';lon='+loc.longitude+';');
@@ -194,6 +207,35 @@ var ERWP = (function($, window, erwpSettings) {
 
                 }
                 else normal_render();
+            },
+
+            /**
+             * Get namespaced scroll events, for unbinding purposes after ad has loaded.
+             *
+             * @param {Number} index
+             */
+            getNamespacedEvents : function(index) {
+                var namespace = '.ERWP_'+index;
+                return (this.scrollEvents.join(namespace+' ')+namespace);
+            },
+
+            /**
+             * Checks whether to lazy load the current ad or not.
+             *
+             * @param {Object} event Contains $elem and fifIndex.
+             */
+            lazyLoad : function(event) {
+                var $elem = event.data.el,
+                    fifIndex = event.data.i;
+
+                //load ads that are close by, either above or below. Don't load ads that are waaay above, for instance when the user uses the back button (to a previously scrolled page) or ctrl+end
+                if ( $win.scrollTop() >= ($elem.offset().top - $win.height() - erwpSettings.lazyLoadOffset)
+                    && $win.scrollTop() - ($elem.offset().top + $elem.height()) < erwpSettings.lazyLoadOffset
+                    ) {
+                    _debug('Lazy loading ad: ' + fifIndex);
+                    ERWP.renderFifAd($elem);
+                    $win.off(ERWP.getNamespacedEvents(fifIndex));
+                }
             },
 
             /**
@@ -252,6 +294,9 @@ var ERWP = (function($, window, erwpSettings) {
                     iframe.EAS_src = src+";fif=y";
                     iframe.ERWP_fifIndex = $elem.attr('data-ad-index');
 
+                    // Make iframe element support trancparency
+                    $elem.find('iframe').attr('allowTransparency','true');
+
                     $win.trigger('erwpAdCreated', [src, $elem, cu, this.breakPoint]);
                     _debug('Creating fif for '+cu);
                 }
@@ -302,6 +347,17 @@ var ERWP = (function($, window, erwpSettings) {
                 var $adElem = this.getAdElementFromFifIframe(iframeWin),
                     adInspect = this.inspectFif(iframeWin, $adElem);
 
+                // Don't resize/collapse ads with index defined in erwpSettings.adsToNotResize
+                if (erwpSettings.adsToNotResize) {
+                    var index = parseInt($adElem.attr('data-ad-index'), 10);
+                    if (erwpSettings.adsToNotResize.indexOf(index) !== -1) {
+                        // Probably safe to add class even if we don't know if we get an ad or not.
+                        $adElem.addClass('has-ad');
+                        _debug('Skipping resizing of ad ' + index);
+                        return;
+                    }
+                }
+
                 if( adInspect.isEmpty ) {
                     _debug('Making ad '+$adElem.attr('id')+' hidden, cause: '+adInspect.emptyReason);
                     this.hideAd($adElem);
@@ -327,9 +383,9 @@ var ERWP = (function($, window, erwpSettings) {
             hideAd : function($adElem) {
                 $adElem
                     .height(0)
+                    .hide()
                     .removeClass('has-ad')
-                    .attr('data-current-cu', '')
-                    .html('');
+                    .attr('data-current-cu', '');
 
                 $win.trigger('erwpAdHidden', [$adElem, this.breakPoint]);
             },
@@ -391,8 +447,8 @@ var ERWP = (function($, window, erwpSettings) {
                         }
                         return false;
                     },
-                    gotNewHeight = updateSize(iframeDocHeight, iframeHeight, 'height');//,
-                    //gotNewWidth = updateSize(iframeDocWidth, iframeWidth, 'width')*/;
+                    gotNewHeight = updateSize(iframeDocHeight, iframeHeight, 'height'),
+                    gotNewWidth = erwpSettings.resizeAdWidth ? updateSize(iframeDocWidth, iframeWidth, 'width') : false;
 
                 $adElem.height(iframeDocHeight*ratio);
 
@@ -401,7 +457,7 @@ var ERWP = (function($, window, erwpSettings) {
                     $adElem.addClass('has-ad');
                 }
 
-                // return gotNewHeight;
+                return gotNewHeight;
             },
 
             /**
@@ -443,38 +499,6 @@ var ERWP = (function($, window, erwpSettings) {
                             }
                         });
                         return hasEmptyAdTag;
-                    },
-                    iframeScripts = fifWin.document.querySelectorAll("body script"),
-                    iframeElements = fifWin.document.querySelectorAll("body *"),
-                    containsAllScriptNodes = function () {
-                        // No comment but no other elements either, check if div-container has anything more than the iframe
-                        return iframeScripts.length === iframeElements.length;
-                    },
-                    containsOnlyEmptyImages = function() {
-                        var images = fifWin.document.querySelectorAll("body img");
-                        if( (images.length + iframeScripts.length) ==  iframeElements.length ) {
-                            var onlyEmptyImages = true;
-                            for(var i=0; i < images.length; i++) {
-                                if( images[i].height != 0 ) {
-                                    onlyEmptyImages = false;
-                                    break;
-                                }
-                            }
-                            return onlyEmptyImages;
-                        }
-                        return false;
-                    },
-                    containsOnlyHiddenElements = function() {
-                        if( (iframeElements.length - iframeScripts.length) == 1 ) {
-                            for(var i=0; i < iframeElements.length; i++) {
-                                if( iframeElements[i].nodeName != 'SCRIPT' && typeof iframeElements[i].getAttribute == 'function') {
-                                    if( iframeElements[i].offsetHeight == 0 ) {
-                                        return true;
-                                    }
-                                }
-                            }
-                        }
-                        return false;
                     };
 
                 var status = {
