@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=980" />
     <title>EAS_fif</title>
     <script>
-        var easHost = window.location.hash.split('=')[1];
+        var easHost = window.location.hash.split('=')[1] || 'e2.emediate.se';
         document.write('<'+'script src="//'+easHost+'/EAS_tag.1.0.js" '+'><'+'/'+'script'+'>');
         var doLoad = function() {window.top.ERWP.fifLoaded(window)};
         if (window.addEventListener) {
@@ -31,7 +31,9 @@
 <body>
     <script>
         var inDapIF=true;
-        document.write('<scr'+'ipt type="text/javascript" src="'+window.frameElement.EAS_src+'"></scr'+'ipt>');
+        if(window.frameElement.EAS_src) {
+            document.write('<scr'+'ipt type="text/javascript" src="'+window.frameElement.EAS_src+'"></scr'+'ipt>');
+        }
     </script>
 </body>
 </html>
