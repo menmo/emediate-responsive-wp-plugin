@@ -1,14 +1,33 @@
 <?php
+
 if(!empty($_POST['emediate_options'])){
-    ERWP_Options::save(stripslashes_deep($_POST['emediate_options']));
-    echo "<h1>Saved:".date("H:i:s")."</h1>";
+    $options = stripslashes_deep($_POST['emediate_options']);
+
+    foreach($options['breakpoints'] as $i => $br) {
+        if(empty($br['slug'])) {
+            unset($options['breakpoints'][$i]);
+        }
+    }
+
+    foreach($options['ads'] as $i => $ad) {
+        if(empty($ad['slug'])) {
+            unset($options['ads'][$i]);
+        }
+    }
+
+    ERWP_Options::save($options);    
+
+    wp_redirect("options-general.php?page=emediate-settings&saved=1");
+}
+
+function erwp_sort_ads($ad1, $ad2) {
+    return strcmp($ad1['slug'], $ad2['slug']);
 }
 ?>
 
 <div class="wrap">
 
-    <div id="icon-options-general" class="icon32"><br/></div>
-    <h2>Emediate Responsive Wordpress Plugin</h2>
+    <h1>Emediate Responsive Wordpress Plugin</h1>
 
     <form method="post" action="" >
         <?php $emediate_opts = ERWP_Options::load(); ?>
@@ -18,27 +37,31 @@ if(!empty($_POST['emediate_options'])){
             <table class="widefat">
 
                 <?php
-                if(isset($emediate_opts['breakpoints'])){
+                 if(!isset($emediate_opts['breakpoints'])) {
+                    $emediate_opts['breakpoints'] = array();
+                }
+                $emediate_opts['breakpoints'][] = array();
                     $i = 0;
                     foreach ($emediate_opts['breakpoints'] as $opts) {
-                        ?>
+                        if($i == count($emediate_opts['breakpoints']) -1) { ?>
                         <tr>
+                            <td><h3>New breakpoint</h3></td>
+                        </tr>
+                        <?php } ?>
+                        <tr>
+                            <td>
+                                <strong>Slug: </strong><input type="text" name="emediate_options[breakpoints][<?php echo $i ?>][slug]" value="<?php echo $opts['slug']?>" />
+                            </td>
                             <td>
                                 <strong>Min-width: </strong><input type="text" name="emediate_options[breakpoints][<?php echo $i ?>][min_width]" value="<?php echo $opts['min_width']?>" />
                             </td>
                             <td>
                                 <strong>Max-width: </strong><input type="text" name="emediate_options[breakpoints][<?php echo $i ?>][max_width]" value="<?php echo $opts['max_width']?>" />
                             </td>
-                            <td>
-                                <input type="button" class="button-secondary" value="Ta Bort" onclick="EmediateAdmin.remove(jQuery(this).parent().parent())"/>
-                            </td>
-                            <br/>
                         </tr>
                         <?php
                         $i++;
                     }
-
-                }
                 ?>
             </table>
         </div>
@@ -49,22 +72,30 @@ if(!empty($_POST['emediate_options'])){
         <div id="emediate_ads">
             <table class="widefat">
                 <?php
-                if(isset($emediate_opts['ads'])){
+                if(!isset($emediate_opts['ads'])) {
+                    $emediate_opts['ads'] = array();
+                } else {
+                    usort($emediate_opts['ads'], "erwp_sort_ads");
+                }
+                $emediate_opts['ads'][] = array();
                     $i = 0;
                     foreach ($emediate_opts['ads'] as $opts) {
-                        ?>
+                        if($i == count($emediate_opts['ads']) -1) { ?>
+                        <tr>
+                            <td><h3>New ad</h3></td>
+                        </tr>
+                        <?php } ?>
                         <tr>
                             <td>
                                 <strong>Slug: </strong><input type="text" name="emediate_options[ads][<?php echo $i ?>][slug]" value="<?php echo $opts['slug']?>" />
                             </td>
                             <?php
-                                $cus= 0;
-                                while(count($emediate_opts['breakpoints']) > $cus){ ?>
+                                foreach($emediate_opts['breakpoints'] as $cus => $br){
+                                    if(!empty($br['slug'])) { ?>
                                     <td>
-                                        <strong>CU-<?php echo$cus?> </strong><input type="text" name="emediate_options[ads][<?php echo $i ?>][cu<?php echo $cus ?>]" value="<?php echo isset($opts['cu'.$cus]) ? $opts['cu'.$cus] : ''?>" />
+                                        <strong><?php echo $br['slug']?>: </strong><input type="text" name="emediate_options[ads][<?php echo $i ?>][cu<?php echo $cus ?>]" value="<?php echo isset($opts['cu'.$cus]) ? $opts['cu'.$cus] : ''?>" />
                                     </td>
-
-                               <?php   $cus++;
+                                <?php }
                                 }
                             ?>
                             <td>
@@ -103,21 +134,16 @@ if(!empty($_POST['emediate_options'])){
                             <td>
                                 <strong>Height: </strong><input type="text" name="emediate_options[ads][<?php echo $i ?>][height]" value="<?php echo empty($opts['height']) ? 0:$opts['height'] ?>" />
                             </td>
-                            <td>
-                                <input type="button" class="button-secondary" value="Ta Bort" onclick="EmediateAdmin.remove(jQuery(this).parent().parent())"/>
-                            </td>
                         </tr>
                         <?php
                         $i++;
                     }
-                }
                     ?>
             </table>
         </div>
 
-        <input type="button" class="button-secondary" value="Lägg till ny" onclick="EmediateAdmin.addAd()" style="margin-top: 12px; margin-bottom: 5px"/>
         <input type="submit" class="button-primary" value="Spara" style="margin-top: 12px; margin-bottom: 5px">
-        <div id="icon-options-general" class="icon32"><br/></div>
+
         <h2>General</h2>
         <table>
             <tr>

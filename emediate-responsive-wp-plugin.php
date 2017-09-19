@@ -19,7 +19,7 @@ if( is_admin() ) {
 
     // Add settings page in wp-admin
     add_action('admin_menu', function() {
-        $js_hook = add_options_page(
+        add_options_page(
             'Emediate',
             'Emediate',
             'manage_options',
@@ -28,12 +28,23 @@ if( is_admin() ) {
                 require_once ERWP_PLUGIN_PATH.'/templates/admin/settings-page.php';
             }
         );
-        wp_enqueue_script('admin-'.$js_hook, ERWP_PLUGIN_URL.'templates/admin/admin-ui.js', array('jquery'), ERWP_PLUGIN_VERSION);
     });
 
+    add_action( 'admin_notices', 'erwp_admin_notice__success' );    
 } else {
 
     // Theme implementation
     add_action('template_redirect', 'ERWP_Plugin::themeInit');
 
+}
+
+function erwp_admin_notice__success() {
+    $screen = get_current_screen();
+	if ($screen->id === 'settings_page_emediate-settings' && $_GET['saved'] == '1') {
+    ?>
+    <div class="notice notice-success is-dismissible">
+        <p><?php echo 'Saved!' ?></p>
+    </div>
+    <?php
+    }
 }
