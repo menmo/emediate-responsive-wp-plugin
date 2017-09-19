@@ -65,9 +65,7 @@ function erwp_sort_ads($ad1, $ad2) {
                 ?>
             </table>
         </div>
-        <input type="button" class="button-secondary" value="Lägg till ny" onclick="EmediateAdmin.addBreakpoint()" style="margin-top: 12px; margin-bottom: 5px"/>
         <input type="submit" class="button-primary" value="Spara" style="margin-top: 12px; margin-bottom: 5px">
-        <div id="icon-options-general" class="icon32"><br/></div>
         <h2>Ads</h2>
         <div id="emediate_ads">
             <table class="widefat">
@@ -91,7 +89,7 @@ function erwp_sort_ads($ad1, $ad2) {
                             </td>
                             <?php
                                 foreach($emediate_opts['breakpoints'] as $cus => $br){
-                                    if(!empty($br['slug'])) { ?>
+                                    if($cus < count($emediate_opts['breakpoints'])-1) { ?>
                                     <td>
                                         <strong><?php echo $br['slug']?>: </strong><input type="text" name="emediate_options[ads][<?php echo $i ?>][cu<?php echo $cus ?>]" value="<?php echo isset($opts['cu'.$cus]) ? $opts['cu'.$cus] : ''?>" />
                                     </td>
