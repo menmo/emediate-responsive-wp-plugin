@@ -370,7 +370,7 @@ var ERWP = (function($, window, erwpSettings) {
                         interval = setInterval(function() {
                             _this.resizeIframeToDocumentSize($adElem);
                             count += 1;
-                            if (count > 4)
+                            if (count > 5)
                                 clearInterval(interval);
                         }, 1000);
                 }
@@ -442,13 +442,13 @@ var ERWP = (function($, window, erwpSettings) {
                     updateSize = function(newSize, oldSize, sizeFunc) {
                         if( newSize != oldSize ) {
                             _debug('Resizing ad '+$adElem.attr('id')+' '+sizeFunc+', from '+oldSize+' to '+newSize);
-                            $iframe[sizeFunc](iframeDocHeight).attr('data-current-'+sizeFunc, iframeDocHeight);
+                            $iframe[sizeFunc](newSize).attr('data-current-'+sizeFunc, newSize);
                             return true;
                         }
                         return false;
                     },
-                    gotNewHeight = updateSize(iframeDocHeight, iframeHeight, 'height'),
-                    gotNewWidth = erwpSettings.resizeAdWidth ? updateSize(iframeDocWidth, iframeWidth, 'width') : false;
+                    gotNewHeight = updateSize(iframeDocHeight, iframeHeight, 'height');
+                    //gotNewWidth = erwpSettings.resizeAdWidth ? updateSize(iframeDocWidth, iframeWidth, 'width') : false;
 
                 $adElem.height(iframeDocHeight*ratio);
 
