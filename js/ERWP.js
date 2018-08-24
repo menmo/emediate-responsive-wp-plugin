@@ -279,7 +279,7 @@ var ERWP = (function($, window, erwpSettings) {
                         .html('');
 
                     src = '//'+erwpSettings.defaultJSHost+'/eas?cre=mu;js=y;target=_blank;'+erwpSettings.cuParamName+'='+cu+
-                        ';cat1='+erwpSettings.cat1+';cat2='+erwpSettings.cat2+';'+erwpSettings.adQuery+(extraQuery || '');
+                        ';cat1='+erwpSettings.cat1+';cat2='+erwpSettings.cat2+';cat3='+erwpSettings.cat3+';'+erwpSettings.adQuery+(extraQuery || '');
 
                     // sanitize url
                     src = src.replace(/;;/g, ';');

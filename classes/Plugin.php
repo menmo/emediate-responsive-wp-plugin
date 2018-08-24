@@ -80,7 +80,8 @@ class ERWP_Plugin {
                 'lazyLoadOffset' => self::$opts['lazy_load_offset'],
                 'lazyLoadStart' => self::$opts['lazy_load_start'],
                 'cat1' => apply_filters('emediate_cat1', ''),
-                'cat2' => apply_filters('emediate_cat2', '')
+                'cat2' => apply_filters('emediate_cat2', ''),
+                'cat3' => apply_filters('emediate_cat3', '')
             ));
 
         $script .= '; '.PHP_EOL.'/* ]]> */</script>';
